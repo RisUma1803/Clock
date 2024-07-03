@@ -3,42 +3,96 @@
 // // getMinutes() - minutni olib beradi
 // // getSeconds() - secundni olib beradi
 
-
-const hour = document.querySelector('.h'),
-  min = document.querySelector('.m'),
-  sec = document.querySelector('.s'),
-  hourNum = document.querySelector('.hours'),
-  minNum = document.querySelector('.minutes');
+const hour = document.querySelector(".h"),
+  min = document.querySelector(".m"),
+  sec = document.querySelector(".s"),
+  hourNum = document.querySelector(".hours"),
+  minNum = document.querySelector(".minutes");
 
 function clock() {
   let time = new Date(),
     seconds = time.getSeconds(),
     minutes = time.getMinutes(),
-    hours = time.getHours()
+    hours = time.getHours();
 
-    sec.style.transform = `rotate(${seconds * 6}deg)`;
-    min.style.transform = `rotate(${minutes * 6}deg)`;
-    hour.style.transform = `rotate(${hours * 30}deg)`;
+  sec.style.transform = `rotate(${seconds * 6}deg)`;
+  min.style.transform = `rotate(${minutes * 6}deg)`;
+  hour.style.transform = `rotate(${hours * 30}deg)`;
   setTimeout(() => {
     clock();
   }, 1000);
 
-  hourNum.innerHTML = hours < 10 ? "0" +hours : hours
-  hourNum.innerHTML = minutes < 10 ? "0" +minutes : minutes
+  hourNum.innerHTML = hours < 10 ? "0" + hours : hours;
+  minNum.innerHTML = minutes < 10 ? "0" + minutes : minutes;
 }
 clock();
 
-const tabsItem = document.querySelectorAll('.tabsItem'),
-   tabsContentItem = document.querySelectorAll('.tabsContentItem');
+const tabsItem = document.querySelectorAll(".tabsItem"),
+  tabsContentItem = document.querySelectorAll(".tabsContentItem");
 
-   for (let i = 0; i < tabsItem.length; i++) {
-       tabsItem[i].addEventListener('click', (e) => {
-        e.preventDefault()
-        for (let j = 0; j < tabsContentItem.length; j++) {
-            tabsItem[j].classList.remove('active')
-            tabsContentItem[j].classList.remove('active')
-        }
-        tabsItem[i].classList.add('active')
-        tabsContentItem[i].classList.add('active')
-       })     
-   }
+for (let i = 0; i < tabsItem.length; i++) {
+  tabsItem[i].addEventListener("click", (e) => {
+    e.preventDefault();
+    for (let j = 0; j < tabsContentItem.length; j++) {
+      tabsItem[j].classList.remove("active");
+      tabsContentItem[j].classList.remove("active");
+    }
+    tabsItem[i].classList.add("active");
+    tabsContentItem[i].classList.add("active");
+  });
+}
+
+const btn = document.querySelector(".stopwatch__btn"),
+  btnH = document.querySelector('.stopwatch__hours'),
+  btnM = document.querySelector('.stopwatch__minutes'),
+  btnS = document.querySelector('.stopwatch__seconds'),
+  tabSpan = document.querySelector('.tabsLink__span');
+
+let stopwatchInterval;
+let stopwatchRunning = false;
+
+btn.addEventListener('click', () => {
+  const currentText = btn.innerHTML.trim().toUpperCase();
+
+  if (currentText === "START") {
+    btn.innerHTML = "STOP";
+    stopwatchRunning = true;
+    startStopwatch();
+    tabSpan.classList.add("active")
+  } else if (currentText === "STOP") {
+    btn.innerHTML = "CLEAR";
+    stopwatchRunning = false;
+    tabSpan.classList.add("active_clear")
+    clearInterval(stopwatchInterval);
+  } else if (currentText === "CLEAR") {
+    btn.innerHTML = "START";
+    btnH.innerHTML = "0";
+    btnM.innerHTML = "0";
+    btnS.innerHTML = "0";
+    tabSpan.classList.remove("active_clear")
+    tabSpan.classList.remove("active")
+  }
+});
+
+function startStopwatch() {
+  let shours = 0,
+    sminutes = 0,
+    sseconds = 0;
+
+  stopwatchInterval = setInterval(() => {
+    if (stopwatchRunning) {
+      sseconds++;
+      if (sseconds === 60) {
+        sseconds = 0;
+        sminutes++;
+      }
+      if (sminutes === 60) {
+        sminutes = 0;
+        shours++;
+      }
+      btnS.innerHTML = sseconds < 10 ? "0" + sseconds : sseconds;
+      btnM.innerHTML = sminutes < 10 ? "0" + sminutes : sminutes;
+      btnH.innerHTML = shours < 10 ? "0" + shours : shours;
+    }
+  }, 1000);
+}
